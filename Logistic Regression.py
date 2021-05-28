@@ -42,10 +42,7 @@ y = y[:, np.newaxis]
 data=np.array(data)
 Data1=data[np.array(np.where(y == 1))[0]]
 Data2=data[np.array(np.where(y == 0))[0]]
-iterations= 1000
-alpha=0.001
 theta=np.zeros((3, 1))
-cost = np.zeros(iterations)
 theta = sci.fmin_tnc(func = cost_function, x0 = theta.flatten(), fprime = gradient, disp=False, args = (X, y.flatten()))[0]
 # accuracy(X, y.flatten(), theta, 0.5) has an accuracy of 89%
 plt.figure(num='Exam Scores')
