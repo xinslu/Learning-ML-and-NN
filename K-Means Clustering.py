@@ -39,8 +39,7 @@ def closestCentroid(X, centroids, colors, K, markers):
 def computeMeans(idxarray, X, K, centroids):
     print(centroids)
     for i in range(K):
-        idxs = np.array(np.where(idaxrray == i))
-        print(X[idxs])
+        idxs = np.array(np.where(idxarray == i))
         centroids[i] = np.mean(X[idxs], axis=1)
     return centroids
 
