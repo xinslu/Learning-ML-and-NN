@@ -1,9 +1,7 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.io
+from scipy.io import loadmat
 from sklearn.svm import SVC
-from matplotlib.colors import ListedColormap
 
 
 def plot_decision_regions(X, y, classifier, resolution=0.01):
@@ -16,7 +14,7 @@ def plot_decision_regions(X, y, classifier, resolution=0.01):
                            np.arange(x2_min, x2_max, resolution))
     Z = classifier.predict(np.array([xx1.ravel(), xx2.ravel()]).T)
     Z = Z.reshape(xx1.shape)
-    cs = plt.contour(xx1, xx2, Z, levels=[0.15])
+    plt.contour(xx1, xx2, Z, levels=[0.15])
     plt.xlim(0, 1)
     plt.ylim(0, 1)
     plt.show()
@@ -41,7 +39,7 @@ def split_data(data, totalData):
     return trainData, testData
 
 
-data = scipy.io.loadmat("./input/ex6data2.mat")
+data = loadmat("./input/ex6data2.mat")
 X = data['X']
 y = data['y']
 data = np.hstack((X, y))

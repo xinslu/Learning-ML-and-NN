@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 def graph_prediction(X, theta, data):
     x = np.linspace(X.min(), X.max(), 1000)
     plt.plot(x, theta[0] + x * theta[1], '.r')
-    lineX = np.linspace(X.min(), X.max(), 100)
     plt.xlim([5, 25])
     plt.plot(data[:, [1]], data[:, [2]], 'rx')
     plt.grid(True)
