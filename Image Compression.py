@@ -1,8 +1,6 @@
 import matplotlib.image as mpimg
 import numpy as np
 import matplotlib.pyplot as plt
-from scipy.io import loadmat
-from matplotlib.colors import ListedColormap
 from matplotlib.axes._axes import _log as matplotlib_axes_logger
 import scipy.spatial
 
@@ -38,6 +36,8 @@ def computeMeans(idxarray, X, K, centroids):
 
 matplotlib_axes_logger.setLevel('ERROR')
 img = mpimg.imread('./input/bird_small.png')
+plt.imshow(img)
+plt.show()
 X = img.reshape(img.shape[0] * img.shape[1], 3)
 centroids = initializeCentroids(X, 16)
 for i in range(10):

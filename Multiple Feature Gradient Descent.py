@@ -42,5 +42,4 @@ for i in range(iterations):
     prediction = X.dot(theta)
     theta = theta - (X.T.dot((prediction - Y)) / m) * alpha
     cost[i] = np.sum((prediction - Y)**2) / 2 / m
-
-graph_cost(iterations, cost)
+graph_prediction(X, theta, data)
