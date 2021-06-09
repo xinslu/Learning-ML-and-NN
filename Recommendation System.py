@@ -90,7 +90,7 @@ R = np.append(R, my_ratings0, axis=1)
 num_users = Y.shape[1]
 num_movies = Y.shape[0]
 num_features = 10
-lambdax = 10
+lambdax = 1.5
 X = np.random.normal(size=(num_movies, num_features))
 Theta = np.random.normal(size=(num_users, num_features))
 params = np.append(X.ravel(), Theta.ravel(), axis=0)
@@ -98,8 +98,9 @@ opts = {'maxiter': 100,
         'disp': True,
         'retall': True}
 params = minimize(cofiCostFunc, params, method='BFGS', args=(Ynorm, R, num_users,
-                                                             num_movies, num_features, lambdax), options=opts)
+                                                             num_movies, num_features, lambdax))
 X = np.reshape(params[0: (num_movies * num_features)],
                (num_movies, num_features))
 Theta = np.reshape(
     params[num_movies * num_features:], (num_users, num_features))
+p = X.dot(Theta.T)
