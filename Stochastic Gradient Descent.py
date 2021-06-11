@@ -26,17 +26,17 @@ data = pd.read_csv("./input/ex1data1.txt", header=None,
 data.insert(0, 'Ones', 1)
 cols = data.shape[1]
 m = data.shape[0]
-X = np.array(data.iloc[:, 0:cols - 1])
-Y = np.array(data.iloc[:, cols - 1:cols])
-theta = np.zeros((2, 1))
 data = np.array(data)
-iterations = 1500
+X = data[:, :cols - 1]
+Y = data[:, cols - 1:]
+theta = np.zeros((2, 1))
+iterations = 1000
 alpha = 0.01
-hypothesis = X.dot(theta)
-cost = np.zeros(iterations)
-for i in range(iterations):
-    prediction = X.dot(theta)
-    theta = theta - (X.T.dot((prediction - Y)) / m) * alpha
-    cost[i] = np.sum((prediction - Y)**2) / 2 / m
-
+cost = np.zeros(m)
+for j in range(m):
+    idx = np.random.randint(m)
+    prediction = theta[0] + theta[1] * X[idx]
+    theta = theta - (prediction - Y[idx]).dot(X[idx]) * alpha
+    cost[j] = np.sum((prediction - Y[idx])**2) / 2
 graph_prediction(X, theta, data)
+graph_cost(m, cost)
