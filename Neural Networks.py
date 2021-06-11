@@ -59,41 +59,7 @@ def nnCostFunction(nn_params, input_layer_size, hidden_layer_size,
     Theta2_grad[:, 0] = Theta2_grad_unregularized[:, 0]
     grad = np.concatenate((Theta1_grad.reshape(
         Theta1_grad.size, order='F'), Theta2_grad.reshape(Theta2_grad.size, order='F')))
-    return J
-
-
-def gradient(nn_params, input_layer_size, hidden_layer_size,
-             num_labels, X, y, lambda_reg):
-    Theta1 = np.reshape(nn_params[:hidden_layer_size * (input_layer_size + 1)],
-                        (hidden_layer_size, input_layer_size + 1), order='F')
-    Theta2 = np.reshape(nn_params[hidden_layer_size * (input_layer_size + 1):],
-                        (num_labels, hidden_layer_size + 1), order='F')
-    m = len(X)
-    X = np.column_stack((np.ones((m, 1)), X))
-    z2 = X.dot(Theta1.T)
-    a2 = sigmoid(np.dot(X, Theta1.T))
-    a2 = np.column_stack((np.ones((a2.shape[0], 1)), a2))
-    z3 = a2.dot(Theta2.T)
-    a3 = sigmoid(z3)
-    eye_matrix = np.eye(num_labels)
-    y = eye_matrix[(y - 1).ravel()]
-    d3 = a3 - y
-    d2 = np.multiply(d3.dot(Theta2[:, 1:]), sigmoidGradient(z2))
-    delta1 = d2.T.dot(X)
-    delta2 = d3.T.dot(a2)
-    Theta1_grad = delta1 / m
-    Theta2_grad = delta2 / m
-    Theta1_grad_unregularized = np.copy(Theta1_grad)
-    Theta2_grad_unregularized = np.copy(Theta2_grad)
-    Theta1reg = Theta1 * (lambda_reg / m)
-    Theta2reg = Theta2 * (lambda_reg / m)
-    Theta1_grad = Theta1_grad + Theta1reg
-    Theta2_grad = Theta2_grad + Theta2reg
-    Theta1_grad[:, 0] = Theta1_grad_unregularized[:, 0]
-    Theta2_grad[:, 0] = Theta2_grad_unregularized[:, 0]
-    grad = np.concatenate((Theta1_grad.reshape(
-        Theta1_grad.size, order='F'), Theta2_grad.reshape(Theta2_grad.size, order='F')))
-    return grad
+    return J, grad
 
 
 def randInitializeWeights(L_in, L_out):
@@ -148,19 +114,24 @@ def learning(initial_nn_params):
     input_layer_size = 400
     hidden_layer_size = 25
     num_labels = 10
-    lambda_reg = 1
-
-    def gradientlearning(p):
-        return gradient(p, input_layer_size, hidden_layer_size,
-                        num_labels, X, y, lambda_reg)
+    lambda_reg = 0.1
 
     def costFunc(p):
         return nnCostFunction(p, input_layer_size, hidden_layer_size,
                               num_labels, X, y, lambda_reg)
-    options = {'disp': True, 'maxiter': 200}
-    nn_params = minimize(costFunc, jac=gradientlearning, x0=initial_nn_params,
-                         method='CG', options=options)
+    options = {'disp': True, 'maxiter': 50}
+    nn_params = minimize(costFunc, jac=True, x0=initial_nn_params,
+                         method='L-BFGS-B', options=options)
     return nn_params.x
+
+
+def predict(Theta1, Theta2, X):
+    m = X.shape[0]
+    num_labels = Theta2.shape[0]
+    p = np.zeros((m, 1))
+    h1 = sigmoid(np.dot(np.column_stack((np.ones((m, 1)), X)), Theta1.T))
+    h2 = sigmoid(np.dot(np.column_stack((np.ones((m, 1)), h1)), Theta2.T))
+    return np.argmax(h2, axis=1) + 1
 
 
 data = loadmat("./input/ex4data1.mat")
@@ -182,3 +153,6 @@ Theta1 = np.reshape(nn_params[:hidden_layer_size * (input_layer_size + 1)],
                     (hidden_layer_size, input_layer_size + 1), order='F')
 Theta2 = np.reshape(nn_params[hidden_layer_size * (input_layer_size + 1):],
                     (num_labels, hidden_layer_size + 1), order='F')
+pred = predict(Theta1, Theta2, X)
+print()
+print("Accuracy: ", np.mean(pred.ravel() == y.ravel()) * 100)
